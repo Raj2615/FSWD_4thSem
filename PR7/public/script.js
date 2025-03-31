@@ -1,0 +1,1 @@
+function fetchLogs() { fetch('/logs').then(response = const logList = document.getElementById("logList"); logList.innerHTML = ""; logs.forEach(log = const li = document.createElement("li"); li.textContent = `${log.timestamp} - ${log.ip}`; logList.appendChild(li); }); }).catch(error =, error)); } 

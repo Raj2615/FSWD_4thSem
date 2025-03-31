@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management</title>
+</head>
+<body>
+    <h2>Add a New User</h2>
+    <form id="userForm">
+        <input type="text" id="name" placeholder="Name" required />
+        <input type="email" id="email" placeholder="Email" required />
+        <button type="submit">Submit</button>
+    </form>
+
+    <h2>User List</h2>
+    <ul id="userList"></ul>
+
+    <script>
+        function loadUsers() {
+            fetch('/users')
+            .then(response => response.json())
+            .then(users => {
+                const userList = document.getElementById("userList");
+                userList.innerHTML = "";
+                users.forEach(user => {
+                    const li = document.createElement("li");
+                    li.innerHTML = `${user.name} (${user.email}) <button onclick="deleteUser(${user.id})">Delete</button>`;
+                    userList.appendChild(li);
+                });
+            })
+            .catch(error => console.error("Error loading users:", error));
+        }
+
+        document.getElementById("userForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const name = document.getElementById("name").value;
+            const email = document.getElementById("email").value;
+
+            fetch('/users', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email })
+            })
+            .then(response => response.json())
+            .then(() => {
+                alert("User added successfully!");
+                loadUsers();
+            })
+            .catch(error => alert("Error: " + error));
+        });
+
+        function deleteUser(id) {
+            fetch(`/users/${id}`, { method: 'DELETE' })
+            .then(response => response.text())
+            .then(() => {
+                alert("User deleted!");
+                loadUsers();
+            })
+            .catch(error => alert("Error: " + error));
+        }
+
+        loadUsers();
+    </script>
+</body>
+</html>
